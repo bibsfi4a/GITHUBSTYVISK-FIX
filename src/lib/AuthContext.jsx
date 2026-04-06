@@ -24,6 +24,15 @@ export const AuthProvider = ({ children }) => {
       setIsLoadingPublicSettings(true);
       setAuthError(null);
       
+      // If no backend is configured, skip auth entirely and render the app
+      if (!appParams.serverUrl || !appParams.appId) {
+        console.warn('No Base44 backend configured. Skipping auth.');
+        setIsLoadingPublicSettings(false);
+        setIsLoadingAuth(false);
+        setIsAuthenticated(false);
+        return;
+      }
+
       // First, check app public settings (with token if available)
       // This will tell us if auth is required, user not registered, etc.
       const appClient = createAxiosClient({
