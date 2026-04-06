@@ -1,0 +1,40 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "lead_id": {
+      "type": "string",
+      "description": "Associated lead ID"
+    },
+    "from_email": {
+      "type": "string",
+      "description": "Email of sender"
+    },
+    "from_name": {
+      "type": "string",
+      "description": "Name of sender"
+    },
+    "to_email": {
+      "type": "string",
+      "description": "Email of recipient (product owner)"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Message subject"
+    },
+    "content": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "read": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "from_email",
+    "from_name",
+    "to_email",
+    "content"
+  ]
+}

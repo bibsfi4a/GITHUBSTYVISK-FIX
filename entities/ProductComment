@@ -1,0 +1,38 @@
+{
+  "name": "ProductComment",
+  "type": "object",
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "description": "Product being commented on"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Name of commenter"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of commenter"
+    },
+    "comment": {
+      "type": "string",
+      "description": "Comment or suggestion text"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Rating from 1-5 stars"
+    },
+    "is_approved": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether comment is approved for display"
+    }
+  },
+  "required": [
+    "product_id",
+    "user_name",
+    "comment"
+  ]
+}

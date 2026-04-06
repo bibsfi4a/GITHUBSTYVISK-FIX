@@ -1,0 +1,92 @@
+{
+  "name": "Lead",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Lead name"
+    },
+    "email": {
+      "type": "string",
+      "description": "Contact email"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Contact phone"
+    },
+    "product_id": {
+      "type": "string",
+      "description": "Interested product ID"
+    },
+    "campaign_id": {
+      "type": "string",
+      "description": "Source campaign ID"
+    },
+    "message": {
+      "type": "string",
+      "description": "Initial inquiry message"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "qualified",
+        "converted",
+        "lost"
+      ],
+      "default": "new"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "direct",
+        "campaign",
+        "referral",
+        "search",
+        "product_view",
+        "product_like"
+      ],
+      "default": "direct"
+    },
+    "location": {
+      "type": "string",
+      "description": "Lead location"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "social_media_id": {
+      "type": "string",
+      "description": "Social media platform ID or username"
+    },
+    "interest_category": {
+      "type": "string",
+      "description": "Category of interest (from product category)"
+    },
+    "interest_level": {
+      "type": "number",
+      "default": 1,
+      "description": "Interest level (1-10) based on interactions"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this lead is visible in public directory"
+    }
+  },
+  "required": [
+    "name",
+    "email"
+  ]
+}

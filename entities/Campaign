@@ -1,0 +1,113 @@
+{
+  "name": "Campaign",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Campaign name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Campaign details"
+    },
+    "product_id": {
+      "type": "string",
+      "description": "Associated product ID"
+    },
+    "budget": {
+      "type": "number",
+      "description": "Campaign budget"
+    },
+    "daily_budget": {
+      "type": "number",
+      "description": "Daily budget",
+      "default": 0
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "paused",
+        "completed"
+      ],
+      "default": "draft"
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "learning",
+        "gathering_data",
+        "performing_well",
+        "needs_attention"
+      ],
+      "default": "learning",
+      "description": "Campaign phase"
+    },
+    "launch_boost_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "24-48h visibility boost for new campaigns"
+    },
+    "readiness_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Campaign readiness score 0-100"
+    },
+    "target_audience": {
+      "type": "string",
+      "description": "Target audience description"
+    },
+    "location_targeting": {
+      "type": "string",
+      "description": "Geographic targeting"
+    },
+    "geo_radius_expanded": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether geo radius was expanded for better reach"
+    },
+    "impressions": {
+      "type": "number",
+      "default": 0
+    },
+    "clicks": {
+      "type": "number",
+      "default": 0
+    },
+    "conversions": {
+      "type": "number",
+      "default": 0
+    },
+    "spend": {
+      "type": "number",
+      "default": 0
+    },
+    "ai_insight": {
+      "type": "string",
+      "description": "Current AI-generated insight"
+    },
+    "featured_in_marketplace": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_trending": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "name",
+    "product_id",
+    "start_date",
+    "end_date"
+  ]
+}
