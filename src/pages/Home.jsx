@@ -5,8 +5,9 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Package, Plus, LogIn } from "lucide-react";
+import { Search, Package, Plus, LogIn, SlidersHorizontal } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import ProductDetailDialog from "../components/marketplace/ProductDetailDialog";
 import ProductFeedCard from "../components/marketplace/ProductFeedCard";
@@ -15,6 +16,11 @@ import { createPageUrl } from "@/utils";
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [locationFilter, setLocationFilter] = useState("all");
+  const [brandFilter, setBrandFilter] = useState("all");
+  const [showFilters, setShowFilters] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -61,13 +67,28 @@ export default function Home() {
     initialData: [],
   });
 
+  // Extract unique locations and brands for filter dropdowns
+  const uniqueLocations = [...new Set(products.map(p => p.location).filter(Boolean))];
+  const uniqueBrands = [...new Set(products.map(product => {
+    const seller = allUsers.find(u => u.email === product.created_by);
+    return seller ? (seller.business_name || seller.full_name) : "Unknown";
+  }))];
+
   const filteredProducts = products.filter(product => {
     const matchesSearch = 
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (product.tags && product.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())));
     const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
-    return matchesSearch && matchesCategory;
+    const matchesMinPrice = minPrice === "" || product.price >= parseFloat(minPrice);
+    const matchesMaxPrice = maxPrice === "" || product.price <= parseFloat(maxPrice);
+    const matchesLocation = locationFilter === "all" || (product.location && product.location.toLowerCase().includes(locationFilter.toLowerCase()));
+    
+    const seller = allUsers.find(u => u.email === product.created_by);
+    const brandName = seller ? (seller.business_name || seller.full_name) : "Unknown";
+    const matchesBrand = brandFilter === "all" || brandName === brandFilter;
+
+    return matchesSearch && matchesCategory && matchesMinPrice && matchesMaxPrice && matchesLocation && matchesBrand;
   });
 
   const handleProductClick = (product) => {
@@ -90,6 +111,8 @@ export default function Home() {
     "entertainment", "sports_fitness", "beauty", "finance", "other"
   ];
 
+  const hasActiveFilters = categoryFilter !== 'all' || brandFilter !== 'all' || locationFilter !== 'all' || minPrice || maxPrice;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Compact Header */}
@@ -101,7 +124,7 @@ export default function Home() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <Package className="w-5 h-5 text-white" />
               </div>
-              <h1 className="text-lg font-bold text-slate-900 hidden sm:block">Advibra</h1>
+              <h1 className="text-lg font-bold text-slate-900 hidden sm:block">Styvisk</h1>
             </div>
 
             {/* Search Bar */}
@@ -110,24 +133,25 @@ export default function Home() {
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <Input
-                    placeholder="Search products..."
+                    placeholder="Search products, brands, styles..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 h-9"
                   />
                 </div>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-32 sm:w-40 h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map(cat => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat === "all" ? "All" : cat.replace(/_/g, ' ').split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Button 
+                  variant={showFilters ? "default" : "outline"} 
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`h-9 ${showFilters ? 'bg-blue-600 text-white' : ''}`}
+                >
+                  <SlidersHorizontal className="w-4 h-4 mr-1" />
+                  Filters
+                  {hasActiveFilters && (
+                    <span className="ml-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      !
+                    </span>
+                  )}
+                </Button>
               </div>
             </div>
 
@@ -155,6 +179,101 @@ export default function Home() {
               </Button>
             </div>
           </div>
+
+          {/* Advanced Filters Panel */}
+          {showFilters && (
+            <div className="mt-3 pt-3 border-t border-slate-100">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="h-9 text-sm">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map(cat => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat === "all" ? "All Categories" : cat.replace(/_/g, ' ').split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={brandFilter} onValueChange={setBrandFilter}>
+                  <SelectTrigger className="h-9 text-sm">
+                    <SelectValue placeholder="Brand" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Brands</SelectItem>
+                    {uniqueBrands.map(brand => (
+                      <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={locationFilter} onValueChange={setLocationFilter}>
+                  <SelectTrigger className="h-9 text-sm">
+                    <SelectValue placeholder="Location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Locations</SelectItem>
+                    {uniqueLocations.map(loc => (
+                      <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <div className="flex items-center gap-1 col-span-2 md:col-span-2">
+                  <Input
+                    type="number"
+                    placeholder="Min ₹"
+                    value={minPrice}
+                    onChange={e => setMinPrice(e.target.value)}
+                    className="h-9 text-sm"
+                  />
+                  <span className="text-slate-400 text-sm">–</span>
+                  <Input
+                    type="number"
+                    placeholder="Max ₹"
+                    value={maxPrice}
+                    onChange={e => setMaxPrice(e.target.value)}
+                    className="h-9 text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Active Filters Badges */}
+              {hasActiveFilters && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {categoryFilter !== 'all' && (
+                    <Badge variant="secondary" className="bg-blue-50 text-blue-700 cursor-pointer" onClick={() => setCategoryFilter('all')}>
+                      {categoryFilter.replace(/_/g, ' ')} ×
+                    </Badge>
+                  )}
+                  {brandFilter !== 'all' && (
+                    <Badge variant="secondary" className="bg-purple-50 text-purple-700 cursor-pointer" onClick={() => setBrandFilter('all')}>
+                      Brand: {brandFilter} ×
+                    </Badge>
+                  )}
+                  {locationFilter !== 'all' && (
+                    <Badge variant="secondary" className="bg-orange-50 text-orange-700 cursor-pointer" onClick={() => setLocationFilter('all')}>
+                      Location: {locationFilter} ×
+                    </Badge>
+                  )}
+                  {(minPrice || maxPrice) && (
+                    <Badge variant="secondary" className="bg-green-50 text-green-700 cursor-pointer" onClick={() => { setMinPrice(''); setMaxPrice(''); }}>
+                      Price: {minPrice || '0'} – {maxPrice || 'Any'} ×
+                    </Badge>
+                  )}
+                  <Badge 
+                    variant="outline" 
+                    className="cursor-pointer text-red-500 border-red-200 hover:bg-red-50" 
+                    onClick={() => { setCategoryFilter('all'); setBrandFilter('all'); setLocationFilter('all'); setMinPrice(''); setMaxPrice(''); }}
+                  >
+                    Clear All
+                  </Badge>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

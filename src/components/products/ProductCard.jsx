@@ -1,16 +1,31 @@
-import React from "react";
+import React, { useRef, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, Package, Sparkles } from "lucide-react";
+import { Edit, Trash2, Package, Sparkles, Download } from "lucide-react";
 import { motion } from "framer-motion";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { QRCodeSVG } from 'qrcode.react';
+import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
+
 export default function ProductCard({ product, onEdit, onDelete }) {
+  const qrCanvasRef = useRef(null);
+
+  const handleDownloadQR = useCallback(() => {
+    const canvas = qrCanvasRef.current?.querySelector('canvas');
+    if (!canvas) return;
+    const url = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = `${product.name.replace(/[^a-zA-Z0-9]/g, '_')}_QR.png`;
+    link.href = url;
+    link.click();
+  }, [product.name]);
+
   const statusColors = {
     active: "bg-green-100 text-green-700 border-green-200",
+    pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
+    rejected: "bg-red-100 text-red-700 border-red-200",
     paused: "bg-yellow-100 text-yellow-700 border-yellow-200",
     draft: "bg-slate-100 text-slate-700 border-slate-200"
   };
@@ -112,12 +127,19 @@ export default function ProductCard({ product, onEdit, onDelete }) {
                       includeMargin={true}
                     />
                   </div>
+                  {/* Hidden canvas for download */}
+                  <div ref={qrCanvasRef} className="hidden">
+                    <QRCodeCanvas
+                      value={`${window.location.origin}/marketplace?product=${product.id}`}
+                      size={512}
+                      level="H"
+                      includeMargin={true}
+                    />
+                  </div>
                   <p className="text-sm text-slate-500">Scan this code to view the product listing.</p>
-                  <Button onClick={() => {
-                    // Quick way to download an SVG is to draw it on canvas or download string, simplifying for MVP
-                    alert("Right-click or long-press the QR code to save it!");
-                  }}>
-                    Download Instructions
+                  <Button onClick={handleDownloadQR} className="bg-blue-600 hover:bg-blue-700">
+                    <Download className="w-4 h-4 mr-2" />
+                    Download PNG
                   </Button>
                 </div>
               </DialogContent>

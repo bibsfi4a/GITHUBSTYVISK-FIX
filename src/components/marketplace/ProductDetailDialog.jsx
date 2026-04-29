@@ -74,17 +74,17 @@ export default function ProductDetailDialog({ product, open, onOpenChange, selle
     
     // Add UTM parameters
     if (finalUrl.includes('?')) {
-      finalUrl += '&utm_source=advibra&utm_medium=affiliate';
+      finalUrl += '&utm_source=styvisk&utm_medium=affiliate';
     } else {
-      finalUrl += '?utm_source=advibra&utm_medium=affiliate';
+      finalUrl += '?utm_source=styvisk&utm_medium=affiliate';
     }
 
     window.open(finalUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleShare = (platform) => {
-    const url = window.location.href; // We could use a specific product page URL if exists
-    const text = `Check out ${product.name} on the Fashion Discovery Platform!`;
+    const url = window.location.href;
+    const text = `Check out ${product.name} — ₹${product.price} on Styvisk!`;
     
     let shareUrl = "";
     switch (platform) {
@@ -97,6 +97,11 @@ export default function ProductDetailDialog({ product, open, onOpenChange, selle
       case "facebook":
         shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
         break;
+      case "instagram":
+        navigator.clipboard.writeText(`${text}\n${url}`);
+        alert("Caption copied! Opening Instagram — paste it when sharing.");
+        window.open('https://www.instagram.com/', '_blank');
+        return;
       case "copy":
         navigator.clipboard.writeText(`${text} ${url}`);
         alert("Link copied to clipboard!");
@@ -230,6 +235,9 @@ export default function ProductDetailDialog({ product, open, onOpenChange, selle
             <span className="w-full text-center text-sm font-semibold text-slate-500 mb-1">Share this product</span>
             <Button size="sm" variant="outline" onClick={() => handleShare('whatsapp')} className="border-green-200 text-green-700 hover:bg-green-50">
                WhatsApp
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => handleShare('instagram')} className="border-pink-200 text-pink-700 hover:bg-pink-50">
+               Instagram
             </Button>
             <Button size="sm" variant="outline" onClick={() => handleShare('twitter')} className="border-slate-300 text-slate-900 hover:bg-slate-100">
                X (Twitter)

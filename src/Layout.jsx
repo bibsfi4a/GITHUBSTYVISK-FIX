@@ -73,12 +73,12 @@ export default function Layout({ children, currentPageName }) {
             <div className="flex items-center gap-3">
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690509485375fcfa68087480/3012ddd7e_file_00000000570c71fab10d3961814ac1d2.png"
-                alt="Advibra Logo"
+                alt="Styvisk Logo"
                 className="w-10 h-10 rounded-xl object-cover shadow-lg"
               />
               <div>
-                <h2 className="font-bold text-slate-900 text-lg">Advibra</h2>
-                <p className="text-xs text-slate-500">Smart Marketing Platform</p>
+                <h2 className="font-bold text-slate-900 text-lg">Styvisk</h2>
+                <p className="text-xs text-slate-500">Fashion Discovery Platform</p>
               </div>
             </div>
           </SidebarHeader>
@@ -146,7 +146,7 @@ export default function Layout({ children, currentPageName }) {
               <SidebarTrigger className="hover:bg-slate-100 p-2 rounded-lg transition-colors">
                 <Menu className="w-5 h-5" />
               </SidebarTrigger>
-              <h1 className="text-xl font-bold text-slate-900">Advibra</h1>
+              <h1 className="text-xl font-bold text-slate-900">Styvisk</h1>
             </div>
           </header>
 

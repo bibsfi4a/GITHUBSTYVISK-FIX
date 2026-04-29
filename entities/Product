@@ -72,10 +72,12 @@
       "type": "string",
       "enum": [
         "active",
+        "pending",
+        "rejected",
         "paused",
         "draft"
       ],
-      "default": "active"
+      "default": "pending"
     },
     "location": {
       "type": "string",
@@ -96,9 +98,18 @@
       "type": "number",
       "default": 0
     },
+    "clicks": {
+      "type": "number",
+      "default": 0,
+      "description": "Affiliate redirect click count"
+    },
     "website_url": {
       "type": "string",
       "description": "External website link for this product"
+    },
+    "affiliate_link": {
+      "type": "string",
+      "description": "Affiliate redirect URL for tracking purchases"
     }
   },
   "required": [
